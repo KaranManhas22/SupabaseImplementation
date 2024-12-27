@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 if (ContextCompat.checkSelfPermission(
                         this,
-                        android.Manifest.permission.MANAGE_EXTERNAL_STORAGE
+                        Manifest.permission.MANAGE_EXTERNAL_STORAGE
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestManageExternalStoragePermission()
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     private fun requestManageExternalStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
-                val intent = Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                 startActivityForResult(intent,PERMISSION_REQUEST_CODE)
             } catch (e:ActivityNotFoundException) {
                 Toast.makeText(this, "Activity not found", Toast.LENGTH_SHORT).show()
@@ -132,7 +132,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && resultCode == PICK_IMAGE_REQUEST) {
+        Toast.makeText(this, "result code: ${requestCode}", Toast.LENGTH_SHORT).show()
+        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST) {
             data?.data?.let { uri ->
                 binding.imgView.setImageURI(uri)
                 uploadImageToSupabase(uri)
@@ -163,7 +164,7 @@ class MainActivity : AppCompatActivity() {
                             is UploadStatus.Success -> {
                                 Log.d("Upload", "Upload Success")
                                 val imageUrl = bucket.publicUrl(fileName)
-                                var img: ImageView = findViewById(R.id.imgView)
+                                var img = binding.imgView
                                 Glide.with(this@MainActivity)
                                     .load(imageUrl)
                                     .placeholder(R.drawable.ic_launcher_background)
